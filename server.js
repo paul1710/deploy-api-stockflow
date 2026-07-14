@@ -7,8 +7,20 @@ const User = require("./models/user");
 const swaggerSpec = require("./config/swagger");
 
 const app = express();
+const cors = require("cors");
+const allowedOrigins = (process.env.FRONTEND_URLS || 'http://localhost:5173').split(',').map(s => s.trim());
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) return callback(null, true);
+    return callback(new Error('CORS policy: Origin not allowed'));
+  },
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 204,
+};
+app.use(cors(corsOptions));
 app.use(express.json());
-const cors = require("cors")
 
 const PORT = process.env.PORT || 3000;
 
@@ -25,8 +37,6 @@ app.use(
 app.get("/", (req, res) => {
   res.redirect("/api-docs");
 });
-app.use(cors())
-app.use(express.json())
 app.use("/api/auth", require("./routes/auth.routes"));
 app.use("/api/categorias", require("./routes/categoria.routes"));
 app.use("/api/clientes", require("./routes/cliente.routes"));
