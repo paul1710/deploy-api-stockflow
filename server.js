@@ -13,6 +13,12 @@ const corsOptions = {
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
     if (allowedOrigins.indexOf(origin) !== -1) return callback(null, true);
+    // Permitir subdominios dinámicos de Vercel (por ejemplo: project-name.vercel.app)
+    try {
+      if (origin.endsWith('.vercel.app')) return callback(null, true);
+    } catch (e) {
+      // en caso de que origin no sea una cadena segura
+    }
     return callback(new Error('CORS policy: Origin not allowed'));
   },
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
