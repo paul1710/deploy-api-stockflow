@@ -122,8 +122,7 @@ const start = async () => {
     console.log("✅ Conexión a BD establecida exitosamente");
 
     await sequelize.sync({ alter: true });
-
-    console.log("✅ Base de datos sincronizada");
+    console.log("✅ Modelos sincronizados");
 
     await createDefaultUser();
     await seedDemoData();
