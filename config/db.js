@@ -8,11 +8,13 @@ if (!process.env.DB_PASSWORD) {
 }
 
 const sequelize = new Sequelize(
-    process.env.DB_NAME,      // Apunta a "prueba_victor"
-    process.env.DB_USER,      // Apunta a "postgres"
-    process.env.DB_PASSWORD,  // Apunta a "Diosmio46"
+    process.env.DB_NAME,
+    process.env.DB_USER,
+    process.env.DB_PASSWORD,
     {
-        host: process.env.DB_HOST || 'localhost',
+        // Si DB_HOST no existe, que el sistema lance un error y explote.
+        // Es mejor un error claro que una conexión silenciosa a 'localhost'
+        host: process.env.DB_HOST,
         port: process.env.DB_PORT || 5432,
         dialect: 'postgres',
         logging: false
