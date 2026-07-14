@@ -1,6 +1,14 @@
 const { AppError } = require("../utils/errors")
 
 const errorHandler = (err, req, res, next) => {
+  // Asegurar que los headers CORS estén presentes incluso en respuestas de error,
+  // para que el navegador pueda leer el mensaje de error real en lugar de mostrar "CORS error"
+  const origin = req.headers.origin;
+  if (origin) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+  }
+
   if (err instanceof AppError) {
     return res.status(err.statusCode).json({
       status: "error",

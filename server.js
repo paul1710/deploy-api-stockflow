@@ -8,21 +8,25 @@ const swaggerSpec = require("./config/swagger");
 
 const app = express();
 const cors = require("cors");
-const allowedOrigins = (process.env.FRONTEND_URLS || 'http://localhost:5173').split(',').map(s => s.trim());
+const allowedOrigins = (process.env.FRONTEND_URLS || 'http://localhost:5173')
+  .split(',')
+  .map(s => s.trim())
+  .filter(Boolean);
+
 const corsOptions = {
   origin: function (origin, callback) {
+    // Permitir peticiones sin origin (Postman, curl, server-to-server, etc.)
     if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) !== -1) return callback(null, true);
-    // Permitir subdominios dinámicos de Vercel (por ejemplo: project-name.vercel.app)
-    try {
-      if (origin.endsWith('.vercel.app')) return callback(null, true);
-    } catch (e) {
-      // en caso de que origin no sea una cadena segura
-    }
-    return callback(new Error('CORS policy: Origin not allowed'));
+    // Permitir origins configurados en FRONTEND_URLS
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    // Permitir cualquier subdominio de Vercel
+    if (origin.endsWith('.vercel.app')) return callback(null, true);
+    // Rechazar sin lanzar error — el navegador bloqueará la petición
+    return callback(null, false);
   },
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization'],
   optionsSuccessStatus: 204,
 };
 app.use(cors(corsOptions));
