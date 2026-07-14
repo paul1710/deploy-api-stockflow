@@ -121,18 +121,20 @@ const start = async () => {
     await sequelize.authenticate();
     console.log("✅ Conexión a BD establecida exitosamente");
 
-    await sequelize.sync({ alter: true });
-    console.log("✅ Modelos sincronizados");
+    // "force: true" limpia la base de datos y crea todo de cero sin quejas de Postgres
+    await sequelize.sync({ force: true });
+    console.log("✅ Modelos sincronizados desde cero");
 
     await createDefaultUser();
     await seedDemoData();
+    console.log("✅ Datos de prueba cargados con éxito");
 
     app.listen(PORT, "0.0.0.0", () => {
       console.log(`🚀 Servidor corriendo en puerto: ${PORT}`);
     });
 
   } catch (error) {
-    console.error(error);
+    console.error("❌ ERROR CRÍTICO EN EL ARRANQUE:", error);
   }
 };
 
