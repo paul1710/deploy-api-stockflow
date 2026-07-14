@@ -118,17 +118,22 @@ const seedDemoData = async () => {
 
 const start = async () => {
   try {
-    // Solo verifica la conexión, no sincronices ni siembres datos aquí
     await sequelize.authenticate();
     console.log("✅ Conexión a BD establecida exitosamente");
 
-    app.listen(PORT, '0.0.0.0', () => {
+    await sequelize.sync({ alter: true });
+
+    console.log("✅ Base de datos sincronizada");
+
+    await createDefaultUser();
+    await seedDemoData();
+
+    app.listen(PORT, "0.0.0.0", () => {
       console.log(`🚀 Servidor corriendo en puerto: ${PORT}`);
     });
+
   } catch (error) {
-    console.error("❌ Error fatal al conectar a la BD:", error.message);
-    // En lugar de process.exit(1), deja que el proceso siga vivo o intenta reconectar
-    setTimeout(start, 5000); // Reintenta en 5 segundos si falla la conexión inicial
+    console.error(error);
   }
 };
 
