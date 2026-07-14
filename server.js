@@ -122,7 +122,7 @@ const start = async () => {
     console.log("✅ Conexión a BD establecida exitosamente");
 
     // "force: true" limpia la base de datos y crea todo de cero sin quejas de Postgres
-    await sequelize.sync({ force: true });
+    await sequelize.sync();
     console.log("✅ Modelos sincronizados desde cero");
 
     await createDefaultUser();
